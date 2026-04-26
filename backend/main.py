@@ -1,12 +1,32 @@
-from agents.generator import generator_agent
-from agents.reviewer import reviewer_agent
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+# ✅ Correct imports (IMPORTANT FIX)
+from backend.agents.generator import generator_agent
+from backend.agents.reviewer import reviewer_agent
+
+app = FastAPI()
 
 
-def run_pipeline(grade, topic):
+# ✅ Request Body Model
+class InputData(BaseModel):
+    grade: int
+    topic: str
+
+
+# ✅ API Endpoint
+@app.post("/generate")
+def run_pipeline(data: InputData):
+    grade = data.grade
+    topic = data.topic
+
+    # Step 1: Generator
     gen_output = generator_agent(grade, topic)
 
+    # Step 2: Reviewer
     review = reviewer_agent(gen_output, grade)
 
+    # Step 3: Refinement (if fail)
     if review["status"] == "fail":
         refined = generator_agent(grade, topic, review["feedback"])
         return {
@@ -21,6 +41,7 @@ def run_pipeline(grade, topic):
     }
 
 
-if __name__ == "__main__":
-    result = run_pipeline(4, "Types of angles")
-    print(result)
+# ✅ Health check route
+@app.get("/")
+def home():
+    return {"message": "AI Agent System Running 🚀"}
