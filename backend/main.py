@@ -1,11 +1,21 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware  # ✅ NEW
 
-# ✅ Correct imports (IMPORTANT FIX)
+# ✅ Correct imports
 from backend.agents.generator import generator_agent
 from backend.agents.reviewer import reviewer_agent
 
 app = FastAPI()
+
+# ✅ CORS FIX (VERY IMPORTANT)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # allow all origins (for dev)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # ✅ Request Body Model
