@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Agent Dashboard</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      padding: 20px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      background: #3b82f6;
+      color: white;
+      cursor: pointer;
+    }
+
+    pre {
+      background: #020617;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🤖 AI Agent System</h1>
+
+<div class="card">
+  <h3>Input</h3>
+  <input id="grade" placeholder="Grade (e.g. 4)" />
+  <input id="topic" placeholder="Topic (e.g. Types of angles)" />
+  <button onclick="generate()">Generate</button>
+</div>
+
+<div class="card">
+  <h3>📘 Generated Content</h3>
+  <pre id="output"></pre>
+</div>
+
+<div class="card">
+  <h3>🧠 Reviewer Feedback</h3>
+  <pre id="review"></pre>
+</div>
+
+<div class="card">
+  <h3>🔁 Refined Output</h3>
+  <pre id="refined"></pre>
+</div>
+
+<script>
+async function generate() {
+  const grade = document.getElementById("grade").value;
+  const topic = document.getElementById("topic").value;
+
+  const res = await fetch("http://127.0.0.1:8000/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ grade: parseInt(grade), topic })
+  });
+
+  const data = await res.json();
+
+  document.getElementById("output").innerText =
+    JSON.stringify(data.initial, null, 2);
+
+  document.getElementById("review").innerText =
+    JSON.stringify(data.review, null, 2);
+
+  document.getElementById("refined").innerText =
+    JSON.stringify(data.refined || "No refinement needed", null, 2);
+}
+</script>
+
+</body>
+</html>
