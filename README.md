@@ -40,11 +40,9 @@ frontend/index.html
 
 ## 📸 Demo
 
-![Demo](frontend/demo.png)
+![Demo](frontend/Demo.png)
 
 
 ## 👨‍💻 Author
 
 Jayant Bansal
-
-bhai image toh show nhi kr rhi readme file mein kya ru
