@@ -1,93 +1,157 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>AI Agent Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Agent Orchestrator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+    
     body {
-      font-family: Arial;
-      background: #0f172a;
-      color: white;
-      padding: 20px;
+      font-family: 'Inter', sans-serif;
+      background-color: #020617;
+      background-image: radial-gradient(circle at 50% -20%, #1e293b 0%, #020617 80%);
+      min-height: 100vh;
     }
 
-    .card {
-      background: #1e293b;
-      padding: 20px;
+    .glass-card {
+      background: rgba(30, 41, 59, 0.5);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .glass-card:hover {
+      border-color: rgba(59, 130, 246, 0.5);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #334155;
       border-radius: 10px;
-      margin-bottom: 20px;
     }
 
-    input, button {
-      padding: 10px;
-      margin: 5px;
-      border-radius: 5px;
-      border: none;
-    }
-
-    button {
-      background: #3b82f6;
-      color: white;
-      cursor: pointer;
-    }
-
-    pre {
-      background: #020617;
-      padding: 10px;
-      border-radius: 5px;
-      overflow-x: auto;
+    .status-dot {
+      height: 8px;
+      width: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 8px;
     }
   </style>
 </head>
+<body class="text-slate-200 p-4 md:p-8">
 
-<body>
+  <div class="max-w-6xl mx-auto">
+    <header class="mb-10 flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
+          Agentic Workflow Engine
+        </h1>
+        <p class="text-slate-400 text-sm mt-1">Multi-stage content generation & refinement</p>
+      </div>
+      <div class="hidden md:block">
+        <span class="text-xs bg-slate-800 px-3 py-1 rounded-full border border-slate-700 text-slate-300">
+          <span class="status-dot bg-emerald-500 animate-pulse"></span> System Online
+        </span>
+      </div>
+    </header>
 
-<h1>🤖 AI Agent System</h1>
+    <div class="glass-card rounded-2xl p-6 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Target Grade</label>
+          <input id="grade" type="number" placeholder="e.g. 4" 
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Subject Matter</label>
+          <input id="topic" type="text" placeholder="e.g. Quantum Physics basics" 
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all">
+        </div>
+        <button onclick="generate()" class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-6 rounded-lg transition-all shadow-lg shadow-blue-900/20">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+          Execute Workflow
+        </button>
+      </div>
+    </div>
 
-<div class="card">
-  <h3>Input</h3>
-  <input id="grade" placeholder="Grade (e.g. 4)" />
-  <input id="topic" placeholder="Topic (e.g. Types of angles)" />
-  <button onclick="generate()">Generate</button>
-</div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <div class="flex flex-col">
+        <div class="flex items-center gap-2 mb-3 px-1">
+          <i data-lucide="pen-tool" class="w-4 h-4 text-blue-400"></i>
+          <h3 class="text-sm font-semibold uppercase tracking-widest text-slate-400">Initial Draft</h3>
+        </div>
+        <div class="glass-card rounded-xl p-4 flex-grow">
+          <pre id="output" class="custom-scrollbar text-sm font-mono text-blue-300 h-80 overflow-y-auto whitespace-pre-wrap">Waiting for input...</pre>
+        </div>
+      </div>
 
-<div class="card">
-  <h3>📘 Generated Content</h3>
-  <pre id="output"></pre>
-</div>
+      <div class="flex flex-col">
+        <div class="flex items-center gap-2 mb-3 px-1">
+          <i data-lucide="shield-check" class="w-4 h-4 text-amber-400"></i>
+          <h3 class="text-sm font-semibold uppercase tracking-widest text-slate-400">Reviewer Analysis</h3>
+        </div>
+        <div class="glass-card rounded-xl p-4 flex-grow">
+          <pre id="review" class="custom-scrollbar text-sm font-mono text-amber-200 h-80 overflow-y-auto whitespace-pre-wrap">Awaiting generation...</pre>
+        </div>
+      </div>
 
-<div class="card">
-  <h3>🧠 Reviewer Feedback</h3>
-  <pre id="review"></pre>
-</div>
+      <div class="flex flex-col">
+        <div class="flex items-center gap-2 mb-3 px-1">
+          <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
+          <h3 class="text-sm font-semibold uppercase tracking-widest text-slate-400">Refined Output</h3>
+        </div>
+        <div class="glass-card rounded-xl p-4 flex-grow bg-emerald-500/5">
+          <pre id="refined" class="custom-scrollbar text-sm font-mono text-emerald-300 h-80 overflow-y-auto whitespace-pre-wrap">Final result will appear here...</pre>
+        </div>
+      </div>
 
-<div class="card">
-  <h3>🔁 Refined Output</h3>
-  <pre id="refined"></pre>
-</div>
+    </div>
+  </div>
 
-<script>
-async function generate() {
-  const grade = document.getElementById("grade").value;
-  const topic = document.getElementById("topic").value;
+  <script>
+    // Initialize Icons
+    lucide.createIcons();
 
-  const res = await fetch("http://127.0.0.1:8000/generate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ grade: parseInt(grade), topic })
-  });
+    async function generate() {
+      const grade = document.getElementById("grade").value;
+      const topic = document.getElementById("topic").value;
+      const btn = document.querySelector('button');
+      
+      if(!grade || !topic) return alert("Please fill in all fields");
 
-  const data = await res.json();
+      // UI Loading State
+      btn.disabled = true;
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Processing...`;
+      lucide.createIcons();
 
-  document.getElementById("output").innerText =
-    JSON.stringify(data.initial, null, 2);
+      try {
+        const res = await fetch("http://127.0.0.1:8000/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ grade: parseInt(grade), topic })
+        });
 
-  document.getElementById("review").innerText =
-    JSON.stringify(data.review, null, 2);
+        const data = await res.json();
 
-  document.getElementById("refined").innerText =
-    JSON.stringify(data.refined || "No refinement needed", null, 2);
-}
-</script>
-
+        document.getElementById("output").innerText = JSON.stringify(data.initial, null, 2);
+        document.getElementById("review").innerText = JSON.stringify(data.review, null, 2);
+        document.getElementById("refined").innerText = JSON.stringify(data.refined || "No refinement needed", null, 2);
+        
+      } catch (error) {
+        document.getElementById("output").innerText = "Error connecting to server. Ensure your FastAPI backend is running.";
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="sparkles" class="w-5 h-5"></i> Execute Workflow`;
+        lucide.createIcons();
+      }
+    }
+  </script>
 </body>
 </html>
