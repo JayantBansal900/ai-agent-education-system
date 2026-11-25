@@ -1,4 +1,5 @@
 # 🤖 AI Agent Education System
+[![CI](https://github.com/JayantBansal900/ai-agent-education-system/actions/workflows/ci.yml/badge.svg)](https://github.com/JayantBansal900/ai-agent-education-system/actions/workflows/ci.yml)
 
 A **multi-agent pipeline** that creates grade-appropriate study material: a short explanation plus multiple-choice questions for any topic. A **Generator agent** writes the content, a **Reviewer agent** checks it against quality rules, and failed content is sent back with feedback for a **refinement** pass.
 
@@ -111,7 +112,7 @@ The orchestration, reviewer and UI are complete. The generator currently returns
 - [ ] Feed reviewer feedback into the LLM prompt for real refinement
 - [ ] Use an LLM-as-judge reviewer alongside the rule checks (factual accuracy, answer correctness)
 - [ ] Readability scoring (e.g. Flesch-Kincaid) mapped to grade level
-- [ ] Unit tests for the reviewer rules
+- [x] Unit tests for the reviewer rules (`tests/test_pipeline.py`)
 - [ ] Restrict CORS origins for deployment
 
 ## Author
